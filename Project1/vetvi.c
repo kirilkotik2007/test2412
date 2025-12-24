@@ -195,5 +195,6 @@ void main(void) {
     if (c > 0) count++;
 
     printf("\n Количество положительных чисел в строке = %d\n", count);
+    printf("\n conflict test");
     _getch();
 }
