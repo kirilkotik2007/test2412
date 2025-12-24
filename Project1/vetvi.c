@@ -194,6 +194,6 @@ void main(void) {
     if (b > 0) count++;
     if (c > 0) count++;
 
-    printf("\n Количество положительных чисел = %d\n", count);
+    printf("\n Количество положительных чисел в строке = %d\n", count);
     _getch();
 }
