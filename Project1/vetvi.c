@@ -190,9 +190,9 @@ void main(void) {
         printf("\n Ошибка ввода числа!");
         _getch();
     }
-    if (a > 0) count++;
+    if (a > 0) count++;!!
     if (b > 0) count++;
-    if (c > 0) count++;
+    if (c > 0) count++;!
 
     printf("\n Количество положительных чисел = %d\n", count);
     _getch();
