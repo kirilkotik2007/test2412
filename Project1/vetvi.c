@@ -168,31 +168,83 @@ void main(void) {
     }
 */
 #include <stdio.h>
-#include <conio.h>
+#include <stdlib.h>
 #include <locale.h>
+#define N 5
+#define LEN 50
+
+struct Exchange {
+    char name[LEN];
+    float buy;
+    float sell;
+    char address[LEN];
+    char phone[LEN];
+};
+
 void main(void) {
-    setlocale(LC_ALL, "rus");
+    setlocale(LC_ALL, "Russian");
+    struct Exchange ex[N];
 
-    float a, b, c;
-    int count;
+    // Ввод данных о каждой валюте
+    for (int i = 0; i < N; i++) {
+        printf("Введите информацию для валюты %d:\n", i + 1);
+        printf("Название пункта обмена: ");
+        fgets(ex[i].name, LEN, stdin);
+        ex[i].name[strcspn(ex[i].name, "\n")] = '\0'; // Удаление символа новой строки
 
-    printf("\n Введите число a: ");
+        printf("Курс покупки: ");
+        while (scanf_s("%f", &ex[i].buy) != 1) {
+            printf("Неверный ввод. Попробуйте снова: ");
+            while (getchar() != '\n'); // Очистка буфера
+        }
 
-    if (scanf_s("%f", &a) != 1) {
-        printf("\n Ошибка ввода числа!");
-            _getch();
+        printf("Курс продажи: ");
+        while (scanf_s("%f", &ex[i].sell) != 1) {
+            printf("Неверный ввод. Попробуйте снова: ");
+            while (getchar() != '\n'); // Очистка буфера
+        }
+
+        getchar(); // Для очистки символа новой строки после ввода числа
+
+        printf("Адрес: ");
+        fgets(ex[i].address, LEN, stdin);
+        ex[i].address[strcspn(ex[i].address, "\n")] = '\0'; // Удаление символа новой строки
+
+        printf("Телефон: ");
+        fgets(ex[i].phone, LEN, stdin);
+        ex[i].phone[strcspn(ex[i].phone, "\n")] = '\0'; // Удаление символа новой строки
+
+        printf("\n");
     }
-    if (scanf_s("%f", &b) != 1) {
-        printf("\n Ошибка ввода числа!");
-        _getch();
+
+    // а) Максимальный курс покупки
+    int maxBuy = 0;
+    for (int i = 1; i < N; i++) {
+        if (ex[i].buy > ex[maxBuy].buy)
+            maxBuy = i;
     }
-    if (scanf_s("%f", &c) != 1) {
-        printf("\n Ошибка ввода числа!");
-        _getch();
+    printf("а) Максимальный курс покупки:\n");
+    printf("%s, %s\n\n", ex[maxBuy].name, ex[maxBuy].address);
+
+    // б) Минимальный курс продажи
+    int minSell = 0;
+    for (int i = 1; i < N; i++) {
+        if (ex[i].sell < ex[minSell].sell)
+            minSell = i;
     }
-    if (a > 0) count++;
-    if (b > 0) count++;
-    if (c > 0) count++;
+    printf("б) Минимальный курс продажи:\n");
+    printf("%s, %s, %s\n\n", ex[minSell].name, ex[minSell].address, ex[minSell].phone);
+
+    // в) Одинаковые курсы покупки
+    printf("в) Одинаковые курсы покупки:\n");
+    for (int i = 0; i < N; i++) {
+        for (int j = i + 1; j < N; j++) {
+            if (ex[i].buy == ex[j].buy) {
+                printf("%s (%s) и %s (%s)\n", ex[i].name, ex[i].address, ex[j].name, ex[j].address);
+            }
+        }
+    }
+    printf("\n");
 
     printf("\n Количество положительных чисел = %d\n", count);
     printf("\n conflict test");
