@@ -167,86 +167,136 @@ void main(void) {
         _getch();
     }
 */
+/*
 #include <stdio.h>
-#include <stdlib.h>
+#include <conio.h>
 #include <locale.h>
-#define N 5
-#define LEN 50
+#include <string.h>  // ← ОБЯЗАТЕЛЬНО для strcspn!
 
-struct Exchange {
-    char name[LEN];
-    float buy;
-    float sell;
-    char address[LEN];
-    char phone[LEN];
+#define n 5
+
+struct BANK {
+    char name[20];
+    float buy_course;
+    float sell_course;
+    char address[30];
+    char phone[20];
 };
 
 void main(void) {
-    setlocale(LC_ALL, "Russian");
-    struct Exchange ex[N];
+    setlocale(LC_ALL, "rus");
 
-    // Ввод данных о каждой валюте
-    for (int i = 0; i < N; i++) {
-        printf("Введите информацию для валюты %d:\n", i + 1);
-        printf("Название пункта обмена: ");
-        fgets(ex[i].name, LEN, stdin);
-        ex[i].name[strcspn(ex[i].name, "\n")] = '\0'; // Удаление символа новой строки
+    struct BANK bank[n];  // массив из 5 банков
+    int i;
 
-        printf("Курс покупки: ");
-        while (scanf_s("%f", &ex[i].buy) != 1) {
-            printf("Неверный ввод. Попробуйте снова: ");
-            while (getchar() != '\n'); // Очистка буфера
+    // Ввод данных
+    for (i = 0; i < n; i++) {
+        printf("\n------- Банк %d -------\n", i + 1);
+
+        printf("Введите название банка: ");
+        fgets(bank[i].name, 20, stdin);
+        bank[i].name[strcspn(bank[i].name, "\n")] = '\0';  // ← исправлено
+
+        printf("Введите курс покупки: ");
+        scanf_s("%f", &bank[i].buy_course);
+
+        printf("Введите курс продажи: ");
+        scanf_s("%f", &bank[i].sell_course);
+
+        while (getchar() != '\n');  // очистка буфера
+
+        printf("Введите адрес: ");
+        fgets(bank[i].address, 30, stdin);
+        bank[i].address[strcspn(bank[i].address, "\n")] = '\0';  // ← исправлено
+
+        printf("Введите телефон: ");
+        fgets(bank[i].phone, 20, stdin);
+        bank[i].phone[strcspn(bank[i].phone, "\n")] = '\0';  // ← исправлено
+    }
+
+    // Вывод данных
+    printf("\n==== Введённые данные ====\n");
+    for (i = 0; i < n; i++) {
+        printf("\nБанк %d:\n", i + 1);
+        printf("Название: %s\n", bank[i].name);
+        printf("Курс покупки: %.2f\n", bank[i].buy_course);
+        printf("Курс продажи: %.2f\n", bank[i].sell_course);
+        printf("Адрес: %s\n", bank[i].address);
+        printf("Телефон: %s\n", bank[i].phone);
+    }
+
+
+    // а) Выяснить название и адрес обменного пункта с максимальным курсом покупки валюты.
+    int max_index = 0;
+    for (i = 1; i < n; i++)
+    {
+        if (bank[i].buy_course > bank[max_index].buy_course)
+        {
+            max_index = i;
         }
+    }
+    printf("\n=== а) Пункт с максимальным курсом покупки ===\n");
+    printf("Название: %s\n", bank[max_index].name);
+    printf("Адрес: %s\n", bank[max_index].address);
+    printf("Курс покупки: %.2f\n", bank[max_index].buy_course);
 
-        printf("Курс продажи: ");
-        while (scanf_s("%f", &ex[i].sell) != 1) {
-            printf("Неверный ввод. Попробуйте снова: ");
-            while (getchar() != '\n'); // Очистка буфера
+
+    // б) Выяснить название адрес телефон обменного пункта с минимальным курсом продажи валюты.
+    int min_index = 0;
+    for (i = 1; i < n; i++)
+    {
+        if (bank[i].sell_course < bank[min_index].sell_course)
+        {
+            min_index = i;
         }
-
-        getchar(); // Для очистки символа новой строки после ввода числа
-
-        printf("Адрес: ");
-        fgets(ex[i].address, LEN, stdin);
-        ex[i].address[strcspn(ex[i].address, "\n")] = '\0'; // Удаление символа новой строки
-
-        printf("Телефон: ");
-        fgets(ex[i].phone, LEN, stdin);
-        ex[i].phone[strcspn(ex[i].phone, "\n")] = '\0'; // Удаление символа новой строки
-
-        printf("\n");
     }
+    printf("\n=== б) Пункт с минимальным курсом покупки ===\n");
+    printf("Название: %s\n", bank[min_index].name);
+    printf("Адрес: %s\n", bank[min_index].address);
+    printf("Курс продажи: %.2f\n", bank[min_index].sell_course);
+    printf("Телефон: %f", bank[min_index].sell_course);
 
-    // а) Максимальный курс покупки
-    int maxBuy = 0;
-    for (int i = 1; i < N; i++) {
-        if (ex[i].buy > ex[maxBuy].buy)
-            maxBuy = i;
-    }
-    printf("а) Максимальный курс покупки:\n");
-    printf("%s, %s\n\n", ex[maxBuy].name, ex[maxBuy].address);
+    
+    // в) Вывести адреса и названия обменных пунктов с одинаковыми курсами покупки.
+    printf("\n=== в) Пункты с одинаковым курсом покупки ===\n");
+    int found = 0;  // флаг
 
-    // б) Минимальный курс продажи
-    int minSell = 0;
-    for (int i = 1; i < N; i++) {
-        if (ex[i].sell < ex[minSell].sell)
-            minSell = i;
-    }
-    printf("б) Минимальный курс продажи:\n");
-    printf("%s, %s, %s\n\n", ex[minSell].name, ex[minSell].address, ex[minSell].phone);
-
-    // в) Одинаковые курсы покупки
-    printf("в) Одинаковые курсы покупки:\n");
-    for (int i = 0; i < N; i++) {
-        for (int j = i + 1; j < N; j++) {
-            if (ex[i].buy == ex[j].buy) {
-                printf("%s (%s) и %s (%s)\n", ex[i].name, ex[i].address, ex[j].name, ex[j].address);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (bank[i].buy_course == bank[j].buy_course)
+            {
+                printf("Пункт \"%s\" (%s) и пункт \"%s\" (%s) — курс покупки %.2f\n", bank[i].name, bank[i].address, bank[j].name, bank[j].address, bank[i].buy_course);
+                found = 1;
             }
         }
     }
-    printf("\n");
+    if (!found)
+    {
+        printf("Нет пунктов с одинаковым курсом покупки.\n");
+    }
+    // г) Вывести названия, адреса и телефоны обменных пунктов с совпадающими курсами продажи валюты.
 
-    printf("\n Количество положительных чисел = %d\n", count);
-    printf("\n conflict test");
+    printf("\n=== г) Пункты с совпадающими курсами продажи валюты ===\n");
+
+    found = 0;  // флаг
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = i + 1; j < n; j++)
+        {
+            if (bank[i].sell_course == bank[j].sell_course)
+            {
+                printf("Пункт \"%s\" (%s) и пункт \"%s\" (%s) — курс продажи %.2f\n", bank[i].name, bank[i].address, bank[j].name, bank[j].address, bank[i].buy_course);
+                found = 1;
+            }
+        }
+    }
+    if (!found)
+    {
+        printf("Нет пунктов с одинаковым курсом продажи.\n");
+    }
     _getch();
 }
+*/
