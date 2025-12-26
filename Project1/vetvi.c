@@ -300,3 +300,100 @@ void main(void) {
     _getch();
 }
 */
+
+#include <stdio.h>
+#include <conio.h>
+#include <locale.h>
+#include <string.h>
+
+#define n 5
+
+struct COMPANY
+{
+    char fio[50];
+    char t_num[15];
+    float hours;
+    float tariff;
+};
+void main(void)
+{
+    struct COMPANY stuff[n];
+
+    setlocale(LC_ALL, "rus");
+
+    int i;
+    float count[n];
+    float overtime[n];
+    float result[n];
+    float tax = 0.88;
+    for (i = 0; i < n; i++)
+    {
+        printf("\n ---------- Сотрудник %i ----------", i + 1);
+        
+        printf("\n Введите ФИО: ");
+        fgets(stuff[i].fio, 50, stdin);
+        stuff[i].fio[strcspn(stuff[i].fio, "\n")] = '\0';
+        
+        printf("\n Введите табельный номер: ");
+        fgets(stuff[i].t_num, 15, stdin);
+        stuff[i].t_num[strcspn(stuff[i].t_num, "\n")] = '\0';
+
+        printf("\n Введите отработанных часов за месяц: ");
+        scanf_s("%f", &stuff[i].hours);
+
+        printf("\n Введите почасовой тариф: ");
+        scanf_s("%f", &stuff[i].tariff);
+
+        while (getchar() != '\n');
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        printf("\n---------- Сотрудник %i ----------", i + 1);
+
+        printf("\n ФИО %s", stuff[i].fio);
+        printf("\n Табельный номер %s", stuff[i].t_num);
+        printf("\n Часы %f", stuff[i].hours);
+        printf("\n Тариф %f", stuff[i].tariff);
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        count[i] = 0;
+        overtime[i] = 0;
+        result[i] = 0;
+    }
+
+    for (i = 0; i < n; i++)
+    {
+        count[i] += stuff[i].hours;
+    }
+    for (i = 0; i < n; i++)
+    {
+        if (count[i] > 144)
+        {
+            overtime[i] = 2 * (count[i] - 144);
+            printf("\n %.2f", overtime[i]);
+        }
+    }
+    for (i = 0; i < n; i++)
+    {
+        if (count[i] < 144)
+        {
+            result[i] = (stuff[i].hours * stuff[i].tariff) * tax;
+        }
+        else
+        {
+            result[i] = ((stuff[i].hours + (overtime[i]) * stuff[i].tariff) * tax);
+        }
+    }
+
+    printf("\n-------------Итог вычислений--------------\n");
+    for (i = 0; i < n; i++)
+    {
+        printf("\n Сотрудник %i", i + 1);
+        printf("\n Размер ЗП: %.2f", result[i]);
+    }
+    _getch();
+}
+
