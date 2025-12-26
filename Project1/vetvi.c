@@ -299,100 +299,210 @@ void main(void) {
     }
     _getch();
 }
-*/#include <stdio.h>
+*/
+#include <stdio.h>
 #include <conio.h>
 #include <locale.h>
 #include <string.h>
+#include <stdlib.h>
 
-#define n 3
+#define INITIAL_SIZE 5
+#define INCREASE_STEP 5
 
-struct COMPANY
-{
-    char fio[50];
-    char t_num[15];
-    float hours;
-    float tariff;
-};
-void main(void)
-{
-    struct COMPANY stuff[n];
+typedef struct {
+    int index;
+    char country[30];
+    char region[30];
+    char district[30];
+    char city[30];
+    char street[30];
+    char house[10];
+    int apartment;
+} TAddress;
 
-    setlocale(LC_ALL, "rus");
+typedef struct {
+    char surname[30];
+    char name[20];
+    char otch[30];
+    char phone[20];
+    TAddress address;
+    char car_model[30];
+    char car_number[15];
+    char passport_id[15];
+} TOwner;
 
-    int i;
-    float count[n];
-    float overtime[n];
-    float result[n];
-    float tax = 0.88;
-    for (i = 0; i < n; i++)
-    {
-        printf("\n ---------- Сотрудник %i ----------", i + 1);
+void inputOneOwner(TOwner* o) {
+    printf("Фамилия: ");
+    fgets(o->surname, 30, stdin);
+    o->surname[strcspn(o->surname, "\n")] = '\0';
 
-        printf("\n Введите ФИО: ");
-        fgets(stuff[i].fio, 50, stdin);
-        stuff[i].fio[strcspn(stuff[i].fio, "\n")] = '\0';
+    printf("Имя: ");
+    fgets(o->name, 20, stdin);
+    o->name[strcspn(o->name, "\n")] = '\0';
 
-        printf("\n Введите табельный номер: ");
-        fgets(stuff[i].t_num, 15, stdin);
-        stuff[i].t_num[strcspn(stuff[i].t_num, "\n")] = '\0';
+    printf("Отчество: ");
+    fgets(o->otch, 30, stdin);
+    o->otch[strcspn(o->otch, "\n")] = '\0';
 
-        printf("\n Введите отработанных часов за месяц: ");
-        scanf_s("%f", &stuff[i].hours);
+    printf("Телефон: ");
+    fgets(o->phone, 20, stdin);
+    o->phone[strcspn(o->phone, "\n")] = '\0';
 
-        printf("\n Введите почасовой тариф: ");
-        scanf_s("%f", &stuff[i].tariff);
+    printf("Почтовый индекс: ");
+    scanf_s("%d", &o->address.index);
+    getchar();  // очистка \n
 
-        while (getchar() != '\n');
-    }
+    printf("Страна: ");
+    fgets(o->address.country, 30, stdin);
+    o->address.country[strcspn(o->address.country, "\n")] = '\0';
 
-    for (i = 0; i < n; i++)
-    {
-        printf("\n---------- Сотрудник %i ----------", i + 1);
+    printf("Регион: ");
+    fgets(o->address.region, 30, stdin);
+    o->address.region[strcspn(o->address.region, "\n")] = '\0';
 
-        printf("\n ФИО %s", stuff[i].fio);
-        printf("\n Табельный номер %s", stuff[i].t_num);
-        printf("\n Часы %f", stuff[i].hours);
-        printf("\n Тариф %f", stuff[i].tariff);
-    }
+    printf("Район: ");
+    fgets(o->address.district, 30, stdin);
+    o->address.district[strcspn(o->address.district, "\n")] = '\0';
 
-    for (i = 0; i < n; i++)
-    {
-        count[i] = 0;
-        overtime[i] = 0;
-        result[i] = 0;
-    }
+    printf("Город: ");
+    fgets(o->address.city, 30, stdin);
+    o->address.city[strcspn(o->address.city, "\n")] = '\0';
 
-    for (i = 0; i < n; i++)
-    {
-        count[i] += stuff[i].hours;
-    }
-    for (i = 0; i < n; i++)
-    {
-        if (count[i] > 144)
-        {
-            overtime[i] = 2 * (count[i] - 144);
-            printf("\n %.2f", overtime[i]);
-        }
-    }
-    for (i = 0; i < n; i++)
-    {
-        if (count[i] < 144)
-        {
-            result[i] = (stuff[i].hours * stuff[i].tariff) * tax;
-        }
-        else
-        {
-            result[i] = (((stuff[i].hours + (overtime[i])) * stuff[i].tariff) * tax);
-        }
-    }
+    printf("Улица: ");
+    fgets(o->address.street, 30, stdin);
+    o->address.street[strcspn(o->address.street, "\n")] = '\0';
 
-    printf("\n-------------Итог вычислений--------------\n");
-    for (i = 0; i < n; i++)
-    {
-        printf("\n Сотрудник %i", i + 1);
-        printf("\n Размер ЗП: %.2f", result[i]);
-    }
-    _getch();
+    printf("Дом: ");
+    fgets(o->address.house, 10, stdin);
+    o->address.house[strcspn(o->address.house, "\n")] = '\0';
+
+    printf("Квартира: ");
+    scanf_s("%d", &o->address.apartment);
+    getchar();  // очистка \n
+
+    printf("Марка автомобиля: ");
+    fgets(o->car_model, 30, stdin);
+    o->car_model[strcspn(o->car_model, "\n")] = '\0';
+
+    printf("Номер автомобиля: ");
+    fgets(o->car_number, 15, stdin);
+    o->car_number[strcspn(o->car_number, "\n")] = '\0';
+
+    printf("Номер техпаспорта: ");
+    fgets(o->passport_id, 15, stdin);
+    o->passport_id[strcspn(o->passport_id, "\n")] = '\0';
 }
 
+void inputOwners(TOwner** base, int* n) {
+    char ch;
+    *n = 0;
+    *base = NULL;
 
+    do {
+        (*n)++;
+        *base = (TOwner*)realloc(*base, (*n) * sizeof(TOwner));
+        if (*base == NULL) {
+            printf("Ошибка выделения памяти!\n");
+            exit(1);
+        }
+
+        printf("\nВвод владельца %d\n", *n);
+        inputOneOwner(&(*base)[*n - 1]);
+
+        do {
+            printf("Продолжить ввод? (Y/N): ");
+            ch = getchar();
+            while (getchar() != '\n');  // очистка буфера
+            if (ch == 'N' || ch == 'n') return;
+        } while (ch != 'Y' && ch != 'y');
+    } while (1);
+}
+
+void printOwners(TOwner* base, int n) {
+    printf("\n------------ СПИСОК ВЛАДЕЛЬЦЕВ АВТОМОБИЛЕЙ ------------\n");
+    for (int i = 0; i < n; i++) {
+        printf("\n%d. %s %s %s\n", i + 1, base[i].surname, base[i].name, base[i].otch);
+        printf("   Телефон: %s\n", base[i].phone);
+        printf("   Адрес: %d, %s, %s, %s, %s, ул. %s, д. %s, кв. %d\n",
+            base[i].address.index, base[i].address.country, base[i].address.region,
+            base[i].address.district, base[i].address.city, base[i].address.street,
+            base[i].address.house, base[i].address.apartment);
+        printf("   Авто: %s (%s)\n", base[i].car_model, base[i].car_number);
+        printf("   Техпаспорт: %s\n", base[i].passport_id);
+    }
+}
+
+void addOwners(TOwner** base, int* n) {
+    int k;
+    printf("Сколько записей добавить? ");
+    scanf_s("%d", &k);
+    while (getchar() != '\n');  // очистка
+
+    *base = (TOwner*)realloc(*base, (*n + k) * sizeof(TOwner));
+    if (*base == NULL) {
+        printf("Ошибка выделения памяти!\n");
+        exit(1);
+    }
+
+    for (int i = 0; i < k; i++) {
+        printf("\nНовая запись %d\n", i + 1);
+        inputOneOwner(&(*base)[*n + i]);
+    }
+    *n += k;
+}
+
+void searchBySurname(TOwner* base, int n) {
+    char key[30];
+    int found = 0;
+
+    printf("Введите фамилию для поиска: ");
+    fgets(key, 30, stdin);
+    key[strcspn(key, "\n")] = '\0';
+
+    printf("\n--- Результаты поиска ---\n");
+    for (int i = 0; i < n; i++) {
+        if (strcmp(base[i].surname, key) == 0) {
+            printf("\n%d. %s %s %s\n", i + 1, base[i].surname, base[i].name, base[i].otch);
+            printf("   Телефон: %s\n", base[i].phone);
+            printf("   Авто: %s (%s)\n", base[i].car_model, base[i].car_number);
+            found = 1;
+        }
+    }
+    if (!found) printf("Не найдено.\n");
+}
+
+void sortBySurname(TOwner* base, int n) {
+    TOwner temp;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (strcmp(base[j].surname, base[j + 1].surname) > 0) {
+                temp = base[j];
+                base[j] = base[j + 1];
+                base[j + 1] = temp;
+            }
+        }
+    }
+}
+
+int main(void) {
+    setlocale(LC_ALL, "rus");
+
+    TOwner* base = NULL;
+    int n = 0;
+
+    inputOwners(&base, &n);
+    printOwners(base, n);
+
+    addOwners(&base, &n);
+    printOwners(base, n);
+
+    sortBySurname(base, n);
+    printf("\n=== После сортировки по фамилии ===\n");
+    printOwners(base, n);
+
+    searchBySurname(base, n);
+
+    free(base);
+    _getch();
+    return 0;
+}
